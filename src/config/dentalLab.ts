@@ -121,11 +121,14 @@ export const LAB_REGISTERS: Record<string, RegisterConfig> = {
     description: "Your catalogue of restorations with default price and turnaround.",
     amountLabel: "Default price", statuses: ["active", "retired"], showTotal: false,
     fields: [
-      { key: "category", label: "Category", type: "select", options: ["Fixed", "Removable", "Implant", "Orthodontic", "Appliance", "Other"] },
+      { key: "category", label: "Clinical domain", type: "select", options: ["Fixed Prosthetics", "Removables", "Implants", "Orthodontics & Splints", "Other"] },
       { key: "turnaround_days", label: "Turnaround (working days)", type: "number" },
       { key: "material", label: "Default material" },
+      { key: "compatible_materials", label: "Compatible materials (e.g. Zirconia HT, PMMA, Co-Cr)" },
       { key: "cdt", label: "CDT / procedure code (e.g. D2740)" },
       { key: "multi_unit", label: "Multi-unit (bridge)", type: "select", options: ["No", "Yes"] },
+      { key: "unit_rule", label: "Bridge pricing rule", type: "select", options: ["Per unit", "Abutments + pontics same fee", "Flat per bridge", "Not applicable"] },
+      { key: "min_units", label: "Minimum units", type: "number" },
     ],
   },
   shades: {
@@ -215,7 +218,27 @@ export const LAB_REGISTERS: Record<string, RegisterConfig> = {
     kind: "client-prices", title: "Client Prices", itemName: "client price", titleLabel: "Client clinic",
     description: "Special price agreements per clinic and work type.",
     amountLabel: "Agreed price", statuses: ["active", "expired"],
-    fields: [{ key: "work_type", label: "Work type", type: "select", options: WORK_TYPES }, { key: "notes", label: "Notes" }],
+    fields: [
+      { key: "work_type", label: "Work type (leave empty for a tier-only agreement)", type: "select", options: WORK_TYPES },
+      { key: "tier", label: "Price tier (name from Price Schedules, e.g. Tier A)" },
+      { key: "notes", label: "Notes" },
+    ],
+  },
+  "price-tiers": {
+    kind: "price-tiers", title: "Price Schedules", itemName: "price tier", titleLabel: "Tier name",
+    description: "Reusable discount tiers (Standard, Tier A/B/C). Clinics on a tier pay the catalogue price less this discount unless they have a custom price.",
+    amountLabel: "Discount %", amountFormat: "units", statuses: ["active", "retired"], showTotal: false,
+    fields: [{ key: "notes", label: "Who qualifies", type: "textarea" }],
+  },
+  surcharges: {
+    kind: "surcharges", title: "Add-ons & Surcharges", itemName: "add-on", titleLabel: "Add-on name",
+    description: "Optional charges: wax-ups, soft tissue models, characterisation and rush fees.",
+    amountLabel: "Charge", statuses: ["active", "retired"], showTotal: false,
+    fields: [
+      { key: "group", label: "Group", type: "select", options: ["Diagnostic & models", "Custom finishing", "Rush service", "Other"] },
+      { key: "charge_type", label: "Charge type", type: "select", options: ["Flat fee", "Per unit", "Percent of case fee"] },
+      { key: "notes", label: "Notes", type: "textarea" },
+    ],
   },
   "credit-notes": {
     kind: "credit-notes", title: "Credit Notes", itemName: "credit note", titleLabel: "Client clinic",

@@ -439,12 +439,12 @@ export function NewCaseDialog({ open, onOpenChange, defaultClient = "" }: { open
   const { cal } = useLabWorkCalendar();
   const [dueTouched, setDueTouched] = useState(false);
   const wt = (name: string) => catalog.find((w) => w.name === name);
-  const agreed = priceFor(v.client, v.work_type);
   const catalogPrice = wt(v.work_type)?.price ?? null;
+  const agreed = priceFor(v.client, v.work_type, catalogPrice);
   const set = (k: string, val: any) => setV((p) => {
     const next = { ...p, [k]: val };
     if (!feeTouched && (k === "client" || k === "work_type")) {
-      const price = suggestedFee(priceFor(next.client, next.work_type), wt(next.work_type)?.price ?? null);
+      const price = suggestedFee(priceFor(next.client, next.work_type, wt(next.work_type)?.price ?? null), wt(next.work_type)?.price ?? null);
       next.fee = price !== null ? String(price) : "";
     }
     if (k === "work_type") {
