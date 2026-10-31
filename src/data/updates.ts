@@ -13,6 +13,16 @@ export interface UpdateEntry {
 
 export const updates: UpdateEntry[] = [
   {
+    version: "v2.36.0",
+    date: "October 31, 2026",
+    title: "Dental lab Material Store with reorder alerts",
+    kind: "feature",
+    items: [
+      { kind: "feature", text: "New Material Store page with tabs for milling discs, 3D resins, implant hardware and other consumables." },
+      { kind: "feature", text: "Counters for usable lots, low stock, lots expiring within 30 days and quarantined or recalled lots — tap one to filter." },
+    ],
+  },
+  {
     version: "v2.35.0",
     date: "October 31, 2026",
     title: "Dental lab catalogue: services, price tiers and add-ons",
