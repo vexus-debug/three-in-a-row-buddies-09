@@ -141,3 +141,27 @@ export function surchargeAmount(baseFee: number, s: { amount: number | null; dat
   if (s.data?.charge_type === "Percent of case fee") return Math.round(baseFee * v) / 100;
   return v;
 }
+
+/** Store sections for the Material Store page. */
+export const STORE_SECTIONS = ["Milling Discs", "3D Resins", "Implant Hardware", "Other Consumables"] as const;
+export type StoreSection = (typeof STORE_SECTIONS)[number];
+export function storeSection(category?: string | null): StoreSection {
+  const c = (category || "").toLowerCase();
+  if (/disc|pmma|wax|disilicate|block|puck/.test(c)) return "Milling Discs";
+  if (/resin/.test(c)) return "3D Resins";
+  if (/implant/.test(c)) return "Implant Hardware";
+  return "Other Consumables";
+}
+
+export type StoreFilter = "all" | "usable" | "low" | "expiring" | "quarantine";
+/** Reorder pills: low = at/below minimum; expiring = within 30 days; quarantine = recalled or expired. */
+export function filterStock(records: CatalogRecord[], f: StoreFilter, today: string): CatalogRecord[] {
+  if (f === "all") return records;
+  if (f === "expiring") { const ids = new Set(expiringSoon(records, today)); return records.filter((r) => ids.has(r)); }
+  return records.filter((r) => {
+    const s = stockState(r, today);
+    if (f === "usable") return s === "in stock" || s === "low";
+    if (f === "low") return s === "low";
+    return s === "recalled" || s === "expired";
+  });
+}
