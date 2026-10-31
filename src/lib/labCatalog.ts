@@ -110,3 +110,34 @@ export function shadeRecipe(map: ShadeMap | null | undefined, lib?: Record<strin
     pick("body") && `Body ${pick("body")}`, pick("incisal") && `Incisal ${pick("incisal")}`, d.notes].filter(Boolean).join(" · ");
   return { line, firing: d.recipe || "" };
 }
+
+/** Clinical domains used to group the restoration catalogue. Older categories map onto them. */
+export const CLINICAL_DOMAINS = ["Fixed Prosthetics", "Removables", "Implants", "Orthodontics & Splints", "Other"] as const;
+export function clinicalDomain(category?: string | null): (typeof CLINICAL_DOMAINS)[number] {
+  const c = (category || "").toLowerCase();
+  if (c.startsWith("fixed")) return "Fixed Prosthetics";
+  if (c.startsWith("remov")) return "Removables";
+  if (c.startsWith("implant")) return "Implants";
+  if (c.startsWith("ortho") || c.startsWith("appliance") || c.includes("splint")) return "Orthodontics & Splints";
+  return "Other";
+}
+
+/** Tier price: catalogue fee less the tier discount percent, rounded to 2dp. */
+export function tierPrice(catalogPrice: number | null, discountPct: number | null): number | null {
+  if (catalogPrice === null || discountPct === null || !(discountPct > 0)) return null;
+  const pct = Math.min(100, discountPct);
+  return Math.round(catalogPrice * (100 - pct)) / 100;
+}
+
+/** Fee chain: clinic custom price → clinic's tier schedule → catalogue default. */
+export function resolveFee(custom: number | null, catalogPrice: number | null, tierDiscountPct: number | null): number | null {
+  if (custom !== null) return custom;
+  return tierPrice(catalogPrice, tierDiscountPct) ?? catalogPrice;
+}
+
+/** Add-on charge: percent surcharges apply to the base fee, flat ones add their amount. */
+export function surchargeAmount(baseFee: number, s: { amount: number | null; data?: Record<string, any> }): number {
+  const v = Number(s.amount || 0);
+  if (s.data?.charge_type === "Percent of case fee") return Math.round(baseFee * v) / 100;
+  return v;
+}

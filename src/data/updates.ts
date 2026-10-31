@@ -13,6 +13,18 @@ export interface UpdateEntry {
 
 export const updates: UpdateEntry[] = [
   {
+    version: "v2.35.0",
+    date: "October 31, 2026",
+    title: "Dental lab catalogue: services, price tiers and add-ons",
+    kind: "feature",
+    items: [
+      { kind: "feature", text: "New Catalogue page with tabs for Restoration Services, Price Schedules, Add-ons & Surcharges and Shades." },
+      { kind: "feature", text: "Restorations are grouped by clinical domain, with bridge pricing rules, minimum units and compatible materials." },
+      { kind: "feature", text: "Price tiers (e.g. Tier A 10% off): clinics on a tier get the catalogue price less the discount unless they have a custom price." },
+      { kind: "feature", text: "Add-ons & Surcharges library for wax-ups, models, characterisation and rush fees (flat, per unit or percent)." },
+    ],
+  },
+  {
     version: "v2.34.0",
     date: "October 31, 2026",
     title: "Dental lab production: table view and easier navigation",

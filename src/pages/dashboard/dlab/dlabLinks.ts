@@ -4,6 +4,7 @@ import { useLabCases } from "@/hooks/useLabCases";
 import { useLabRecords } from "@/hooks/useLabRecords";
 import { useLabInvoices } from "@/hooks/useLabInvoices";
 import { clientOf } from "@/hooks/useDentalLab";
+import { resolveFee } from "@/lib/labCatalog";
 
 /** Loose key so "Apex Dental", "apex dental clinic" and "Apex  Dental Ltd." match. */
 export const clientKey = (s: string) =>
@@ -40,13 +41,19 @@ export const canonicalClient = (typed: string, names: string[]) => {
   return names.find((n) => clientKey(n) === k) || typed.trim();
 };
 
-/** Agreed price for a clinic + work type, if one is active. */
+/** Fee for a clinic + work type: custom agreed price → clinic's tier schedule → catalogue price. */
 export function useClientPriceLookup() {
   const prices = useLabRecords("client-prices");
-  return (client: string, workType: string): number | null => {
+  const tiers = useLabRecords("price-tiers");
+  return (client: string, workType: string, catalogPrice: number | null = null): number | null => {
     const k = clientKey(client);
-    const hit = (prices.data || []).find((p) => p.status === "active" && clientKey(p.title) === k && p.data?.work_type === workType);
-    return hit ? Number(hit.amount || 0) : null;
+    const mine = (prices.data || []).filter((p) => p.status === "active" && clientKey(p.title) === k);
+    const hit = mine.find((p) => p.data?.work_type === workType && Number(p.amount) > 0);
+    const custom = hit ? Number(hit.amount || 0) : null;
+    const tierName = mine.find((p) => p.data?.tier)?.data?.tier?.trim().toLowerCase();
+    const tier = tierName ? (tiers.data || []).find((t) => t.status === "active" && t.title?.trim().toLowerCase() === tierName) : undefined;
+    const fee = resolveFee(custom, catalogPrice, tier ? Number(tier.amount || 0) : null);
+    return custom !== null || tier ? fee : null;
   };
 }
 

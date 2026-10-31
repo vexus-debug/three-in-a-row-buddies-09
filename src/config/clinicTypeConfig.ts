@@ -298,7 +298,7 @@ const dentalLabNav: NavGroup[] = [
     { title: "QC Station", path: "dlab/r/qc", icon: FileCheck },
   ] },
   { label: "Catalogue & Store", items: [
-    { title: "Work Types", path: "dlab/r/work-types", icon: Package },
+    { title: "Catalogue", path: "dlab/catalogue", icon: Package },
     { title: "Shade Library", path: "dlab/r/shades", icon: Star },
     { title: "Material Store", path: "dlab/r/materials", icon: FlaskConical },
   ] },
