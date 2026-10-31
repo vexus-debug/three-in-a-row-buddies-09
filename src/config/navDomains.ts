@@ -156,6 +156,7 @@ export const DENTAL_LAB_HUBS: HubDomain[] = [
     tabs: [
       { title: "Catalogue", path: "dlab/catalogue" },
       { title: "Work Types", path: "dlab/r/work-types" },
+      { title: "Material Store", path: "dlab/store" },
       { title: "Materials & Lots", path: "dlab/r/materials" },
       { title: "Shade Library", path: "dlab/r/shades" },
     ],
